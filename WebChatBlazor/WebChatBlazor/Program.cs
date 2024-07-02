@@ -8,6 +8,7 @@ using WebChatBlazor.Data;
 using Microsoft.AspNetCore.ResponseCompression;
 using WebChatBlazor.Hubs;
 using WebChatBlazor.Client.ChatServices;
+using WebChatBlazor.Repos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,7 +44,10 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
+
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+builder.Services.AddControllers();
+builder.Services.AddScoped<ChatRepo>();
 builder.Services.AddSignalR();
 builder.Services.AddScoped<ChatService>();
 var app = builder.Build();
@@ -71,7 +75,7 @@ app.MapHub<ChatHub>("/chathub");
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(WebChatBlazor.Client._Imports).Assembly);
-
+app.MapControllers();
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
 
