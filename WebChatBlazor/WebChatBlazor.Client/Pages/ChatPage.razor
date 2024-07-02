@@ -1,0 +1,76 @@
+﻿@page "/chat"
+@implements IDisposable
+@inject ChatService chatService
+@rendermode InteractiveWebAssembly
+
+
+<PageTitle>Chat</PageTitle>
+
+<div class="chat-container">
+    <div class="chat-window">
+        <ul id="messageList">
+            @foreach (var chat in chatService.Chats)
+            {
+                <li class="list-gropu-item mb-2">
+                    <br />
+                    <span class="fw-bold">@chat.UserName:</span>
+                    <br />
+                    @chat.MessageInput
+                </li>
+            }
+        </ul>
+    </div>
+    <div class="mt-3">
+        <EditForm Model="Chat" OnValidSubmit="SendMessageClicked">
+            <DataAnnotationsValidator />
+            <div class="vstack gap-1">
+                <InputText @bind-Value="Chat.UserName" class="form-control w-2" placeholder="Username" />
+                <InputTextArea @bind-Value="Chat.MessageInput" class="form-control" placeholder="Message" />
+            </div>
+            <button class="float-end btn btn-success mt-3" type="submit">Send</button>
+        </EditForm>
+    </div>
+    <div class="card-footer">
+        @if (!chatService.IsConnected)
+        {
+            <div class="alert alert-danger">ChatDisconnected</div>
+        }
+        else
+        {
+            <div class="alert alert-success">ChatConnected</div>
+        }
+    </div>
+    
+</div>
+
+@code {
+    public static string? StoredUserName { get; set; }
+    private Chat Chat = new(); 
+
+    protected override async Task OnInitializedAsync()
+    {
+        chatService.InvokeChatDisplay += StateHasChanged;
+        await chatService.StartConectionAsync();
+        chatService.ReceiveMessage();
+    }
+    async void SendMessageClicked() => await chatService.SendChat(Chat);
+    public void Dispose() => chatService.InvokeChatDisplay -= StateHasChanged;
+
+}
+<style>
+    .chat-container {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        padding: 1rem;
+    }
+
+    .chat-window {
+        flex: 1;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        background-color: #f8f9fa;
+    }
+</style>
