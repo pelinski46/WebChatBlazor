@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using System.Diagnostics;
-using WebChatBlazor.Client;
+using System.Security.Claims;
+using WebChatBlazor.Client.Models;
 
 namespace WebChatBlazor.Components.Account
 {
@@ -50,13 +51,15 @@ namespace WebChatBlazor.Components.Account
             {
                 var userId = principal.FindFirst(options.ClaimsIdentity.UserIdClaimType)?.Value;
                 var email = principal.FindFirst(options.ClaimsIdentity.EmailClaimType)?.Value;
+                var fullname = principal.Claims.Where(f => f.Type == ClaimTypes.Name).Last().Value;
 
-                if (userId != null && email != null)
+                if (userId != null && email != null && fullname != null)
                 {
                     state.PersistAsJson(nameof(UserInfo), new UserInfo
                     {
                         UserId = userId,
                         Email = email,
+                        Fullname = fullname
                     });
                 }
             }

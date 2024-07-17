@@ -1,4 +1,4 @@
-namespace WebChatBlazor.Client
+namespace WebChatBlazor.Client.Models
 {
     // Add properties to this class and update the server and client AuthenticationStateProviders
     // to expose more information about the authenticated user to the client.
@@ -6,5 +6,6 @@ namespace WebChatBlazor.Client
     {
         public required string UserId { get; set; }
         public required string Email { get; set; }
+        public string Fullname { get; set; }
     }
 }

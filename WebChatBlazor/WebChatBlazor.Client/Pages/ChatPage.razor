@@ -1,12 +1,27 @@
 ﻿@page "/chat"
 @implements IDisposable
 @inject ChatService chatService
+@inject AuthenticationStateProvider authenticationStateProvider
+@inject NavigationManager Navigation
 @rendermode InteractiveWebAssembly
 
 
 <PageTitle>Chat</PageTitle>
 
 <div class="chat-container">
+    <div class="chat-header">
+        <h3>Chat</h3>
+    </div>
+    <div class="col-lg-2">
+        <ul id="list-group">
+            @foreach (var u in chatService.ChatAvailableUsers)
+            {
+                <li class="list-gropu-item mb-2">
+                    @u.UserId
+                </li>
+            }
+        </ul>
+    </div>
     <div class="chat-window">
         <ul id="messageList">
             @foreach (var chat in chatService.Chats)
@@ -20,7 +35,7 @@
             }
         </ul>
     </div>
-    <div class="mt-3">
+    <div class="chat-input">
         <EditForm Model="Chat" OnValidSubmit="SendMessageClicked">
             <DataAnnotationsValidator />
             <div class="vstack gap-1">
@@ -49,6 +64,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        chatService = new ChatService(Navigation, authenticationStateProvider);
         chatService.InvokeChatDisplay += StateHasChanged;
         await chatService.StartConectionAsync();
         chatService.ReceiveMessage();
@@ -57,6 +73,7 @@
     public void Dispose() => chatService.InvokeChatDisplay -= StateHasChanged;
 
 }
+
 <style>
     .chat-container {
         display: flex;
@@ -65,12 +82,47 @@
         padding: 1rem;
     }
 
+    .chat-header {
+        padding: 1rem;
+        border-bottom: 1px solid #ddd;
+    }
+
     .chat-window {
         flex: 1;
         overflow-y: auto;
-        border: 1px solid #ddd;
         padding: 1rem;
         margin-bottom: 1rem;
         background-color: #f8f9fa;
+    }
+
+    .chat-input {
+        padding: 1rem;
+        background-color: #f8f9fa;
+    }
+
+    .message {
+        display: flex;
+        margin-bottom: 1rem;
+    }
+
+        .message.sent {
+            justify-content: flex-end;
+        }
+
+            .message.sent .message-content {
+                background-color: #128c7e;
+                color: white;
+            }
+
+        .message.received .message-content {
+            background-color: #f5f6f7;
+            color: black;
+        }
+
+    .message-content {
+        max-width: 60%;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        word-break: break-word;
     }
 </style>

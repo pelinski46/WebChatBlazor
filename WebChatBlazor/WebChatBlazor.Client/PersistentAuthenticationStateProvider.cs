@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
+using WebChatBlazor.Client.Models;
 
 namespace WebChatBlazor.Client
 {

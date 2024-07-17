@@ -5,20 +5,23 @@
 namespace WebChatBlazor.Migrations
 {
     /// <inheritdoc />
-    public partial class Second : Migration
+    public partial class thirddd : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Chats",
+                name: "AvailableUsers",
                 columns: table => new
                 {
-                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MessageInput = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    ConnectionId = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
+                    table.PrimaryKey("PK_AvailableUsers", x => x.Id);
                 });
         }
 
@@ -26,7 +29,7 @@ namespace WebChatBlazor.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Chats");
+                name: "AvailableUsers");
         }
     }
 }
